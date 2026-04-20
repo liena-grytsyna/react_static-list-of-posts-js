@@ -6,19 +6,21 @@ import { PostList } from './components/PostList';
 
 const prepareData = () => {
   // Create maps for quick lookup
-  const usersMap = usersFromServer.reduce((acc, user) => {
-    acc[user.id] = user;
-    return acc;
-  }, {});
+  const usersMap = usersFromServer.reduce(
+    (acc, user) => ({
+      ...acc,
+      [user.id]: user,
+    }),
+    {},
+  );
 
-  const commentsByPostId = commentsFromServer.reduce((acc, comment) => {
-    if (!acc[comment.postId]) {
-      acc[comment.postId] = [];
-    }
-
-    acc[comment.postId].push(comment);
-    return acc;
-  }, {});
+  const commentsByPostId = commentsFromServer.reduce(
+    (acc, comment) => ({
+      ...acc,
+      [comment.postId]: [...(acc[comment.postId] || []), comment],
+    }),
+    {},
+  );
 
   // Prepare posts with user and comments
   return postsFromServer.map(post => ({
